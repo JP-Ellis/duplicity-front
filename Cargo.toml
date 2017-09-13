@@ -1,0 +1,33 @@
+[package]
+name = "duplicity-front"
+version = "0.1.0"
+authors = ["JP-Ellis <josh@jpellis.me>"]
+
+readme = "README.md"
+description = """
+`duplicity-front` is a front end to the
+[duplicity](http://duplicity.nongnu.org/) backup utility, providing support for
+pre-configured remotes and making certain routine tasks easier.
+"""
+
+documentation = "https://github.com/JP-Ellis/duplicity-front"
+homepage = "https://github.com/JP-Ellis/duplicity-front"
+repository  = "https://github.com/JP-Ellis/duplicity-front"
+
+keywords = ["cli", "backup"]
+categories = ["command-line-utilities"]
+
+license = "GPL-3.0"
+
+[badges]
+travis-ci = { repository = "JP-Ellis/duplicity-front", branch = "master" }
+codecov = { repository = "JP-Ellis/duplicity-front", branch = "master", service = "github" }
+
+[dependencies]
+clap = "^2.26"
+env_logger = "^0.4.3"
+log = "^0.3.8"
+serde = "^1.0"
+serde_derive = "^1.0"
+serde_yaml = "^0.7"
+time = "^0.1.38"
