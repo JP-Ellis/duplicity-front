@@ -19,11 +19,9 @@ extern crate clap;
 extern crate env_logger;
 #[macro_use]
 extern crate log;
-extern crate serde;
 #[macro_use]
 extern crate serde_derive;
 extern crate serde_yaml;
-extern crate time;
 
 mod app;
 mod config;
