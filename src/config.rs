@@ -41,12 +41,15 @@ impl Config {
             s.as_ref().to_path_buf()
         };
 
+        Config::check_permissions(&p)?;
+
         let p = p.canonicalize().map_err(|e| {
             Error::new(format!(
                 "Error when canonicalizing configuration path: {}",
                 e
             ))
         })?;
+
 
         File::open(&p)
             .map_err(|e| {
@@ -92,6 +95,48 @@ impl Config {
             }
         }
 
+        Ok(())
+    }
+
+    #[cfg(target_family = "unix")]
+    /// Check the permissions on the config file and warn the user if they are
+    /// readable to anyone else but the user only.
+    ///
+    /// This currently only works on Unix.
+    fn check_permissions<S>(s: &S) -> Result<(), Error>
+    where
+        S: AsRef<path::Path>,
+    {
+        use std::fs;
+        use std::os::unix::fs::PermissionsExt;
+
+        let mode = fs::metadata(s)
+            .map_err(|e| {
+                Error::new(format!("Error when getting config permissions: {}", e))
+            })?
+            .permissions()
+            .mode();
+
+        // Check that
+        if mode & 0o077 != 0 {
+            warn!(
+                "It is recommended that your configuration file be not readable to anyone except for the user."
+            );
+        }
+
+        Ok(())
+    }
+
+    #[cfg(not(target_os = "linux"))]
+    /// Check the permissions on the config file and warn the user if they are
+    /// readable to anyone else but the user only.
+    ///
+    /// This currently only works on Unix.
+    fn check_permissions<S>(s: &S) -> Result<(), Error>
+    where
+        S: AsRef<path::Path>,
+    {
+        // Do nothing on non-linux
         Ok(())
     }
 }
