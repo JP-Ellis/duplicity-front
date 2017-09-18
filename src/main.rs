@@ -58,15 +58,17 @@ fn initialize_logger(level: u64) {
 /// Load a particular repository from the configuration.
 ///
 /// If the repository could not be found in the config, an error is returned.
-fn load_repository<'a, S>(name: S, config: &'a Config) -> Result<&'a Repository, Error>
+fn load_repository<S>(name: S, config: &Config) -> Result<&Repository, Error>
 where
     S: Into<String>,
 {
     let name: String = name.into();
-    config.repositories.get(&name).ok_or(Error::new(format!(
-        "Repository {} could not be loaded from the configuration.",
-        name
-    )))
+    config.repositories.get(&name).ok_or_else(|| {
+        Error::new(format!(
+            "Repository {} could not be loaded from the configuration.",
+            name
+        ))
+    })
 }
 
 /// Construct the initial duplicity command.
@@ -112,7 +114,7 @@ fn run_and_check_command(cmd: &mut Command) -> Result<(), Error> {
 /// Run a backup
 fn backup(matches: &clap::ArgMatches, config: &Config, name: Option<&str>) -> Result<(), Error> {
     let repository = load_repository(
-        name.or(matches.value_of("repository")).expect(
+        name.or_else(|| matches.value_of("repository")).expect(
             "Unable to unwrap repository name.",
         ),
         config,
@@ -125,7 +127,7 @@ fn backup(matches: &clap::ArgMatches, config: &Config, name: Option<&str>) -> Re
     }
 
     if let (&Some(ref source), &Some(ref remote)) = (&repository.source, &repository.remote) {
-        let mut cmd = duplicity_cmd(&repository);
+        let mut cmd = duplicity_cmd(repository);
         if matches.is_present("dry-run") {
             cmd.arg("--dry-run");
         }
@@ -136,7 +138,7 @@ fn backup(matches: &clap::ArgMatches, config: &Config, name: Option<&str>) -> Re
         run_and_check_command(&mut cmd)?;
 
         if let Some(ref arg) = repository.remove_older_than {
-            let mut cmd = duplicity_cmd(&repository);
+            let mut cmd = duplicity_cmd(repository);
             if matches.is_present("dry-run") {
                 cmd.arg("--dry-run");
             }
@@ -149,7 +151,7 @@ fn backup(matches: &clap::ArgMatches, config: &Config, name: Option<&str>) -> Re
         }
 
         if let Some(arg) = repository.remove_all_inc_of_but_n_full {
-            let mut cmd = duplicity_cmd(&repository);
+            let mut cmd = duplicity_cmd(repository);
             if matches.is_present("dry-run") {
                 cmd.arg("--dry-run");
             }
@@ -162,7 +164,7 @@ fn backup(matches: &clap::ArgMatches, config: &Config, name: Option<&str>) -> Re
         }
 
         if let Some(arg) = repository.remove_all_but_n_full {
-            let mut cmd = duplicity_cmd(&repository);
+            let mut cmd = duplicity_cmd(repository);
             if matches.is_present("dry-run") {
                 cmd.arg("--dry-run");
             }
@@ -180,7 +182,7 @@ fn backup(matches: &clap::ArgMatches, config: &Config, name: Option<&str>) -> Re
 
 fn cleanup(matches: &clap::ArgMatches, config: &Config, name: Option<&str>) -> Result<(), Error> {
     let repository = load_repository(
-        name.or(matches.value_of("repository")).expect(
+        name.or_else(|| matches.value_of("repository")).expect(
             "Unable to unwrap repository name.",
         ),
         config,
@@ -193,7 +195,7 @@ fn cleanup(matches: &clap::ArgMatches, config: &Config, name: Option<&str>) -> R
     }
 
     if let (&Some(_), &Some(ref remote)) = (&repository.source, &repository.remote) {
-        let mut cmd = duplicity_cmd(&repository);
+        let mut cmd = duplicity_cmd(repository);
         if matches.is_present("dry-run") {
             cmd.arg("--dry-run");
         }
@@ -219,7 +221,7 @@ fn collection_status(
     name: Option<&str>,
 ) -> Result<(), Error> {
     let repository = load_repository(
-        name.or(matches.value_of("repository")).expect(
+        name.or_else(|| matches.value_of("repository")).expect(
             "Unable to unwrap repository name.",
         ),
         config,
@@ -232,7 +234,7 @@ fn collection_status(
     }
 
     if let (&Some(_), &Some(ref remote)) = (&repository.source, &repository.remote) {
-        let mut cmd = duplicity_cmd(&repository);
+        let mut cmd = duplicity_cmd(repository);
         if matches.is_present("dry-run") {
             cmd.arg("--dry-run");
         }
@@ -256,7 +258,7 @@ fn list_current_files(
     name: Option<&str>,
 ) -> Result<(), Error> {
     let repository = load_repository(
-        name.or(matches.value_of("repository")).expect(
+        name.or_else(|| matches.value_of("repository")).expect(
             "Unable to unwrap repository name.",
         ),
         config,
@@ -269,7 +271,7 @@ fn list_current_files(
     }
 
     if let (&Some(_), &Some(ref remote)) = (&repository.source, &repository.remote) {
-        let mut cmd = duplicity_cmd(&repository);
+        let mut cmd = duplicity_cmd(repository);
         if matches.is_present("dry-run") {
             cmd.arg("--dry-run");
         }
@@ -289,7 +291,7 @@ fn list_current_files(
 
 fn verify(matches: &clap::ArgMatches, config: &Config, name: Option<&str>) -> Result<(), Error> {
     let repository = load_repository(
-        name.or(matches.value_of("repository")).expect(
+        name.or_else(|| matches.value_of("repository")).expect(
             "Unable to unwrap repository name.",
         ),
         config,
@@ -302,7 +304,7 @@ fn verify(matches: &clap::ArgMatches, config: &Config, name: Option<&str>) -> Re
     }
 
     if let (&Some(_), &Some(ref remote)) = (&repository.source, &repository.remote) {
-        let mut cmd = duplicity_cmd(&repository);
+        let mut cmd = duplicity_cmd(repository);
         if matches.is_present("dry-run") {
             cmd.arg("--dry-run");
         }

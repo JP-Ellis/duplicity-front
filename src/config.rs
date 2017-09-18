@@ -27,9 +27,10 @@ impl Config {
         // If the path starts with '~', we have to strip that and replace it
         // with the home_dir path, except that we have to ensure that `home_dir`
         // is well defined.
-        let p = if s.as_ref().starts_with("~") {
-            env::home_dir()
-                .ok_or(Error::new(
+        let p =
+            if s.as_ref().starts_with("~") {
+                env::home_dir()
+                .ok_or_else(|| Error::new(
                     "Config path starts with '~' but the home directory could not be located.",
                 ))
                 .map(|home_path| {
@@ -37,9 +38,9 @@ impl Config {
                         "Unable to strip prefix.  This is a bug and should be reported.",
                     ))
                 })?
-        } else {
-            s.as_ref().to_path_buf()
-        };
+            } else {
+                s.as_ref().to_path_buf()
+            };
 
         Config::check_permissions(&p)?;
 
@@ -55,7 +56,7 @@ impl Config {
             .map_err(|e| {
                 Error::new(format!("Error when opening configuration file: {}", e))
             })
-            .and_then(|f| Config::from_reader(f))
+            .and_then(Config::from_reader)
     }
 
     fn from_reader<I>(reader: I) -> Result<Self, Error>
