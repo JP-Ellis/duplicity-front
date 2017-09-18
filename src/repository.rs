@@ -230,7 +230,7 @@ impl Repository {
         !self.sub_repositories.is_empty()
     }
 
-    #[allow(cyclomatic_complexity)]
+    #[cfg_attr(feature = "cargo-clippy", allow(cyclomatic_complexity))]
     pub fn construct_flags(&self) -> Vec<String> {
         let mut flags: Vec<String> = Vec::new();
 
