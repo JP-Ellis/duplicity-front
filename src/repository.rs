@@ -454,8 +454,8 @@ mod test {
 
     #[test]
     fn serialization() {
-        let mut default_repository1 = Repository::default();
-        let yml = serde_yaml::to_string(&default_repository1).unwrap();
+        let default_repository1 = Repository::default();
+        serde_yaml::to_string(&default_repository1).unwrap();
         assert_eq!(
             &serde_yaml::to_string(&default_repository1).unwrap(),
             "---\n{}"
@@ -477,7 +477,7 @@ remote: "ssh://user@host//backup/location""#
         assert_eq!(
             &serde_yaml::to_string(&default_repository3).unwrap(),
             r#"---
-sub_repositories: 
+sub_repositories:
   - foo
   - "foo:bar"
   - "foo:baz""#
