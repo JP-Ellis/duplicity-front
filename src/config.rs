@@ -30,14 +30,16 @@ impl Config {
         let p =
             if s.as_ref().starts_with("~") {
                 env::home_dir()
-                .ok_or_else(|| Error::new(
+                    .ok_or_else(|| {
+                        Error::new(
                     "Config path starts with '~' but the home directory could not be located.",
-                ))
-                .map(|home_path| {
-                    home_path.join(s.as_ref().strip_prefix("~").expect(
-                        "Unable to strip prefix.  This is a bug and should be reported.",
-                    ))
-                })?
+                )
+                    })
+                    .map(|home_path| {
+                        home_path.join(s.as_ref().strip_prefix("~").expect(
+                            "Unable to strip prefix.  This is a bug and should be reported.",
+                        ))
+                    })?
             } else {
                 s.as_ref().to_path_buf()
             };
@@ -51,11 +53,8 @@ impl Config {
             ))
         })?;
 
-
         File::open(&p)
-            .map_err(|e| {
-                Error::new(format!("Error when opening configuration file: {}", e))
-            })
+            .map_err(|e| Error::new(format!("Error when opening configuration file: {}", e)))
             .and_then(Config::from_reader)
     }
 
@@ -65,9 +64,7 @@ impl Config {
     {
         serde_yaml::from_reader(reader)
             .map(|repositories| Config { repositories })
-            .map_err(|e| {
-                Error::new(format!("Error when parsing configuration file: {}", e))
-            })
+            .map_err(|e| Error::new(format!("Error when parsing configuration file: {}", e)))
             .and_then(|config| config.check().and(Ok(config)))
     }
 
@@ -112,9 +109,7 @@ impl Config {
         use std::os::unix::fs::PermissionsExt;
 
         let mode = fs::metadata(s)
-            .map_err(|e| {
-                Error::new(format!("Error when getting config permissions: {}", e))
-            })?
+            .map_err(|e| Error::new(format!("Error when getting config permissions: {}", e)))?
             .permissions()
             .mode();
 

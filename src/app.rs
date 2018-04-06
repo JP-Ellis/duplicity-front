@@ -1,7 +1,6 @@
 /// Clap App Constructor
 
-use clap::{App, Arg, AppSettings, SubCommand};
-
+use clap::{App, AppSettings, Arg, SubCommand};
 
 /// Construct the repository argument that is used in all subcommands.
 fn repository_arg<'a, 'b>() -> Arg<'a, 'b> {
@@ -11,7 +10,6 @@ fn repository_arg<'a, 'b>() -> Arg<'a, 'b> {
         .help("Repository to backup")
         .long_help("Repository to backup, as set in the configuration file.")
 }
-
 
 /// Backup subcommand
 fn backup<'a, 'b>() -> App<'a, 'b> {
@@ -35,7 +33,6 @@ commands above.",
         .arg(repository_arg())
 }
 
-
 /// Verify subcommand
 fn verify<'a, 'b>() -> App<'a, 'b> {
     SubCommand::with_name("verify")
@@ -47,9 +44,11 @@ information about the options below.
 ",
         )
         .arg(repository_arg())
-        .arg(Arg::with_name("compare-data").long("compare-data").help(
-            "Enables data comparison (refer to duplicity manual).",
-        ))
+        .arg(
+            Arg::with_name("compare-data")
+                .long("compare-data")
+                .help("Enables data comparison (refer to duplicity manual)."),
+        )
         .arg(
             Arg::with_name("time")
                 .long("time")
@@ -58,7 +57,7 @@ information about the options below.
                 .multiple(false)
                 .help(
                     "\
-Selects a backup to verify against (refer to duplicity manual).",
+                     Selects a backup to verify against (refer to duplicity manual).",
                 ),
         )
         .arg(
@@ -69,11 +68,10 @@ Selects a backup to verify against (refer to duplicity manual).",
                 .multiple(false)
                 .help(
                     "\
-Restrict verify to that file or folder (refer to duplicity manual).",
+                     Restrict verify to that file or folder (refer to duplicity manual).",
                 ),
         )
 }
-
 
 /// Collection status subcommand
 fn collection_status<'a, 'b>() -> App<'a, 'b> {
@@ -94,12 +92,11 @@ found, and the number of volumes in each.
                 .multiple(false)
                 .help(
                     "\
-Causes only the specified path status to be collected instead of the entire \
-contents of the backup archive (refer to duplicity manual).",
+                     Causes only the specified path status to be collected instead of the entire \
+                     contents of the backup archive (refer to duplicity manual).",
                 ),
         )
 }
-
 
 /// Cleanup subcommand
 fn cleanup<'a, 'b>() -> App<'a, 'b> {
@@ -107,23 +104,22 @@ fn cleanup<'a, 'b>() -> App<'a, 'b> {
         .about("Delete extraneous duplicity files in the backup location")
         .long_about(
             "\
-Delete extraneous duplicity files in the backup location.  Non-duplicity files \
-and files in complete data sets will not be deleted.  This should only be \
-necessary after a duplicity sessions fails or is aborted.  Note that '--force' \
-is required to actually delete the files instead of just listing them.",
+             Delete extraneous duplicity files in the backup location.  Non-duplicity files \
+             and files in complete data sets will not be deleted.  This should only be \
+             necessary after a duplicity sessions fails or is aborted.  Note that '--force' \
+             is required to actually delete the files instead of just listing them.",
         )
         .arg(repository_arg())
         .arg(Arg::with_name("force").long("force").help(
             "\
-Delete the files instead of just listing them (refer to duplicity manual).",
+             Delete the files instead of just listing them (refer to duplicity manual).",
         ))
         .arg(Arg::with_name("extra-clean").long("extra-clean").help(
             "\
-USE WITH CAUTION.  When cleaning up, be more aggressive about saving space \
-(refer to duplicity manual).",
+             USE WITH CAUTION.  When cleaning up, be more aggressive about saving space \
+             (refer to duplicity manual).",
         ))
 }
-
 
 /// List current files subcommand
 fn list_current_files<'a, 'b>() -> App<'a, 'b> {
@@ -139,16 +135,14 @@ fn list_current_files<'a, 'b>() -> App<'a, 'b> {
                 .multiple(false)
                 .help(
                     "\
-Selects a backup to list files from instead of the latest (refer to duplicity \
-manual).",
+                     Selects a backup to list files from instead of the latest (refer to duplicity \
+                     manual).",
                 ),
         )
 }
 
-
 /// Final construct for everything
 pub fn app<'a, 'b>() -> App<'a, 'b> {
-
     App::new("duplicity-front")
         .author(crate_authors!())
         .version(crate_version!())

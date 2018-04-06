@@ -1,4 +1,3 @@
-
 use error::Error;
 
 /// Simple function used to determine whether a particular flag should be
@@ -8,7 +7,6 @@ use error::Error;
 fn is_false(arg: &bool) -> bool {
     !arg
 }
-
 
 /// Repository options.
 ///
@@ -191,9 +189,9 @@ impl Repository {
     /// Check that a repository not containing sub-repositories has
     /// self-consistent options.
     fn check_repository_options(&self) -> Result<(), Error> {
-        if !self.source.is_some() {
+        if self.source.is_none() {
             Err(Error::new("Repository must specify a source."))
-        } else if !self.remote.is_some() {
+        } else if self.remote.is_none() {
             Err(Error::new(
                 "Repository must specify a remote location for backups.",
             ))
