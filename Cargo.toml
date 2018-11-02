@@ -24,9 +24,9 @@ travis-ci = { repository = "JP-Ellis/duplicity-front", branch = "master" }
 codecov = { repository = "JP-Ellis/duplicity-front", branch = "master", service = "github" }
 
 [dependencies]
-clap = "2.31.2"
-log = "0.4.1"
-serde = "1.0.38"
-serde_derive = "1.0.38"
-serde_yaml = "0.7.3"
-stderrlog = "0.3.0"
+clap = "2.32.0"
+log = "0.4.6"
+serde = "1.0.80"
+serde_derive = "1.0.80"
+serde_yaml = "0.8.7"
+stderrlog = "0.4.1"
