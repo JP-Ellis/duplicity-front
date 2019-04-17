@@ -1,28 +1,48 @@
-# Exit on any error
-set -eux
+#!/usr/bin/bash
 
-# Run clippy and see if it has anything to say
-clippy() {
-    if [[ "$TRAVIS_RUST_VERSION" == "nightly" && $CLIPPY ]]; then
-        cargo clippy
+# Echo all commands before executing them
+set -o xtrace
+# Forbid any unset variables
+set -o nounset
+# Exit on any error
+set -o errexit
+
+# Ensure there are no outstanding lints.
+check_lints() {
+    cargo clippy $FEATURES
+}
+
+# Ensure the code is correctly formatted.
+check_format() {
+    cargo fmt -- --check
+}
+
+# Run the test suite.
+check_tests() {
+    cargo test $FEATURES
+}
+
+check_command_line() {
+    # Try it once using `cargo run`
+    cargo run -- -vvv -i tests/test_notebook.nb -o tests/test_notebook_min.nb
+    if [[ $(wc -c < tests/test_notebook.nb) -le $(wc -c < tests/test_notebook_min.nb) ]]; then
+        echo "No reduction in file size ($(wc -c < tests/test_notebook.nb) => $(wc -c < tests/test_notebook_min.nb))." >&2
+        false
+    fi
+
+    # Try also by calling it manually
+    ./target/debug/mathematica-notebook-filter -vvv -i tests/test_notebook.nb -o tests/test_notebook_min.nb
+    if [[ $(wc -c < tests/test_notebook.nb) -le $(wc -c < tests/test_notebook_min.nb) ]]; then
+        echo "No reduction in file size ($(wc -c < tests/test_notebook.nb) => $(wc -c < tests/test_notebook_min.nb))." >&2
+        false
     fi
 }
 
-# Run the standard build and test suite.
-build_and_test() {
-    cargo build
-    cargo test
-}
-
-# Test the command line and make sure it works.
-command_line() {
-    # TODO
-    true
-}
-
 main() {
-    build_and_test
-    command_line
+    check_lints
+    check_format
+    check_tests
+    check_command_line
 }
 
 main
