@@ -1,13 +1,8 @@
-use std::collections::HashMap;
-use std::env;
-use std::fs::File;
-use std::io;
-use std::path;
-
-use serde_yaml;
-
-use repository::Repository;
 use error::Error;
+use log::{debug, info, warn};
+use repository::Repository;
+use serde_yaml;
+use std::{collections::HashMap, fs::File, io, path};
 
 pub struct Config {
     pub repositories: HashMap<String, Repository>,
@@ -29,7 +24,7 @@ impl Config {
         // is well defined.
         let p =
             if s.as_ref().starts_with("~") {
-                env::home_dir()
+                dirs::home_dir()
                     .ok_or_else(|| {
                         Error::new(
                     "Config path starts with '~' but the home directory could not be located.",

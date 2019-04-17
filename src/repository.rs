@@ -4,6 +4,7 @@ use error::Error;
 /// serialized or not through `skip_serializing_if`.
 ///
 /// By default, all flags are set to `false` and thus are not serialized.
+#[allow(clippy::trivially_copy_pass_by_ref)]
 fn is_false(arg: &bool) -> bool {
     !arg
 }
@@ -228,7 +229,7 @@ impl Repository {
         !self.sub_repositories.is_empty()
     }
 
-    #[cfg_attr(feature = "cargo-clippy", allow(cyclomatic_complexity))]
+    #[allow(clippy::cyclomatic_complexity)]
     pub fn construct_flags(&self) -> Vec<String> {
         let mut flags: Vec<String> = Vec::new();
 
@@ -498,7 +499,8 @@ foo:baz:
 foo:bar:
   source: ~/
   remote: ssh://user@host//backup/location"#,
-            ).unwrap()
+            )
+            .unwrap()
         );
     }
 }

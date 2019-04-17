@@ -1,6 +1,5 @@
 /// Clap App Constructor
-
-use clap::{App, AppSettings, Arg, SubCommand};
+use clap::{crate_authors, crate_version, App, AppSettings, Arg, SubCommand};
 
 /// Construct the repository argument that is used in all subcommands.
 fn repository_arg<'a, 'b>() -> Arg<'a, 'b> {

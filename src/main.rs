@@ -14,12 +14,13 @@
 // You should have received a copy of the GNU General Public License along with
 // this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#[macro_use]
+//! Duplicity front manager in Rust
+
 extern crate clap;
-#[macro_use]
 extern crate log;
 #[macro_use]
 extern crate serde_derive;
+extern crate dirs;
 extern crate serde_yaml;
 extern crate stderrlog;
 
@@ -28,12 +29,11 @@ mod config;
 mod error;
 mod repository;
 
-use std::process::Command;
-use std::process::exit;
-
 use config::Config;
 use error::Error;
+use log::{debug, error, info};
 use repository::Repository;
+use std::process::{exit, Command};
 
 /// Initialize the logger based on the desired level of verbosity.
 fn initialize_logger(level: u64) {
@@ -90,7 +90,8 @@ fn duplicity_cmd(repository: &Repository) -> Command {
 /// returns an error as appropriate.
 fn run_and_check_command(cmd: &mut Command) -> Result<(), Error> {
     info!("command: {:?}", cmd);
-    let mut child = cmd.spawn()
+    let mut child = cmd
+        .spawn()
         .map_err(|e| Error::new(format!("Error when spawning subprocess: {}", e)))?;
 
     let ecode = child
