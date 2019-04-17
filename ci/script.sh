@@ -22,27 +22,10 @@ check_tests() {
     cargo test $FEATURES
 }
 
-check_command_line() {
-    # Try it once using `cargo run`
-    cargo run -- -vvv -i tests/test_notebook.nb -o tests/test_notebook_min.nb
-    if [[ $(wc -c < tests/test_notebook.nb) -le $(wc -c < tests/test_notebook_min.nb) ]]; then
-        echo "No reduction in file size ($(wc -c < tests/test_notebook.nb) => $(wc -c < tests/test_notebook_min.nb))." >&2
-        false
-    fi
-
-    # Try also by calling it manually
-    ./target/debug/mathematica-notebook-filter -vvv -i tests/test_notebook.nb -o tests/test_notebook_min.nb
-    if [[ $(wc -c < tests/test_notebook.nb) -le $(wc -c < tests/test_notebook_min.nb) ]]; then
-        echo "No reduction in file size ($(wc -c < tests/test_notebook.nb) => $(wc -c < tests/test_notebook_min.nb))." >&2
-        false
-    fi
-}
-
 main() {
     check_lints
     check_format
     check_tests
-    check_command_line
 }
 
 main
