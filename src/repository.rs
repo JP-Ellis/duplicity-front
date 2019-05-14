@@ -34,6 +34,8 @@ pub struct Repository {
     pub passphrase: Option<String>,
 
     // Default options
+    #[serde(skip_serializing_if = "is_false")]
+    pub allow_source_mismatch: bool,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub source: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -275,6 +277,9 @@ impl Repository {
         }
 
         // And finally, all the remaining arguments
+        if self.allow_source_mismatch {
+            flags.push("--allow-source-mismatch".into());
+        }
         if self.asynchronous_upload {
             flags.push("--asynchronous-upload".into());
         }
