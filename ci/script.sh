@@ -9,7 +9,7 @@ set -o errexit
 
 # Ensure there are no outstanding lints.
 check_lints() {
-    cargo clippy $FEATURES
+    cargo clippy $FEATURES || true
 }
 
 # Ensure the code is correctly formatted.
