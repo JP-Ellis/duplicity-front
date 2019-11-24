@@ -156,6 +156,8 @@ pub struct Repository {
     pub use_agent: bool,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub volsize: Option<u64>,
+    #[serde(skip_serializing_if = "is_false")]
+    pub ssl_no_check_certificate: bool,
 }
 
 impl Repository {
@@ -444,6 +446,9 @@ impl Repository {
         if let Some(arg) = self.volsize {
             flags.push("--volsize".into());
             flags.push(arg.to_string());
+        }
+        if self.ssl_no_check_certificate {
+            flags.push("--ssl-no-check-certificate".into());
         }
 
         flags
