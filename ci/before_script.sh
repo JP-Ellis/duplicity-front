@@ -14,14 +14,12 @@ rustup_tools() {
 
 # Install cargo tools
 cargo_tools() {
-    if [[ "$TRAVIS_RUST_VERSION" != "stable" ]]; then
-        return
+    if [[ "$TRAVIS_RUST_VERSION" == "stable" ]]; then
+        cargo install cargo-update || echo "cargo-update already installed"
+        cargo install cargo-tarpaulin || echo "cargo-travis already installed"
+        # Update cached binaries
+        cargo install-update -a
     fi
-
-    cargo install cargo-update || echo "cargo-update already installed"
-    cargo install cargo-travis || echo "cargo-travis already installed"
-    # Update cached binaries
-    cargo install-update -a
 }
 
 main() {
